@@ -1,14 +1,21 @@
 ; Commutative Law
-(= (commutative_law_and ($A $B)) ($B $A))
-(= (commutative_law_or ($A $B)) ($B $A))
+(= (commutative_law ($A $B)) ($B $A))
+(= (commutative_law ($A $B . $rest))
+   (append (commutative_law ($B . $rest)) (list $A)))
 
 ; Associative Law
-(= (associative_law_and ($A ($B $C))) (($A $B) $C))
-(= (associative_law_or ($A ($B $C))) (($A $B) $C))
+(= (associative_law ($A ($B $C))) (($A $B) $C))
+(= (associative_law ($A $B $C)) (($A $B) $C))
+(= (associative_law ($A $B . $rest))
+   (associative_law (($A $B) (cons $C $rest))))
 
 ; Distributive Law
 (= (distributive_law_and ($A ($B $C))) (($A $B) ($A $C)))
 (= (distributive_law_or ($A ($B $C))) (($A $B) ($A $C)))
+(= (distributive_law_and ($A $B . $rest))
+   (distributive_law_and (($A $B) (cons $C $rest))))
+(= (distributive_law_or ($A $B . $rest))
+   (distributive_law_or (($A $B) (cons $C $rest))))
 
 ; Identity Law
 (= (identity_law_and ($A 1)) $A)
@@ -37,14 +44,21 @@
 ; De Morgan's Law
 (= (demorgans_law_not_and (not ($A $B))) ((not $A) (not $B)))
 (= (demorgans_law_not_or (not ($A $B))) ((not $A) (not $B)))
+(= (demorgans_law_not_and (not ($A $B . $rest)))
+   (append (list (not $A)) (demorgans_law_not_and (not ($B . $rest)))))
+(= (demorgans_law_not_or (not ($A $B . $rest)))
+   (append (list (not $A)) (demorgans_law_not_or (not ($B . $rest)))))
 
 ; Test cases for commutative law
-! (commutative_law_and (P Q))
-! (commutative_law_or (R S))
+! (commutative_law (P Q))
+! (commutative_law (R S))
+! (commutative_law (A B C D))
 
 ; Test cases for associative law
-! (associative_law_and (T (U V)))
-! (associative_law_or (W (X Y)))
+! (associative_law (T (U V)))
+! (associative_law (W (X Y)))
+! (associative_law (A (B C) D))
+! (associative_law (X (Y Z) (W V)))
 
 ; Test cases for distributive law
 ! (distributive_law_and (A1 (B1 C1)))
